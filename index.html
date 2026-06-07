@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leonardo Garcia — Culinary Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B2A4A;
+    --navy-dark: #111e35;
+    --gold: #C9A84C;
+    --gold-muted: rgba(201,168,76,0.35);
+    --white: #ffffff;
+    --off-white: #f8f6f1;
+    --text: #1a1a1a;
+    --text-muted: #777570;
+    --text-light: #aaa9a5;
+    --border: rgba(0,0,0,0.1);
+    --radius: 6px;
+    --radius-lg: 12px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Jost', sans-serif;
+    color: var(--text);
+    background: var(--off-white);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── EDIT MODE TOGGLE ── */
+  .edit-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: var(--navy);
+    padding: 10px 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+  .edit-bar-left { display: flex; align-items: center; gap: 12px; }
+  .edit-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .edit-toggle {
+    background: rgba(201,168,76,0.15);
+    border: 0.5px solid var(--gold-muted);
+    color: var(--gold);
+    padding: 5px 16px;
+    border-radius: 3px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    transition: background 0.2s;
+  }
+  .edit-toggle:hover { background: rgba(201,168,76,0.25); }
+  .edit-toggle.active { background: var(--gold); color: var(--navy); }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 100px 2rem 4rem; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 3.5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 2.5rem;
+    align-items: center;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.1);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: 80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.06);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-weight: 400;
+  }
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .hero-rule { width: 40px; height: 1px; background: var(--gold); margin: 18px 0; }
+  .hero-bio {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.7);
+    max-width: 500px;
+    margin-bottom: 1.75rem;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hero-tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border: 0.5px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    border-radius: 2px;
+  }
+
+  /* Avatar */
+  .avatar-wrap {
+    width: 160px;
+    height: 200px;
+    border-radius: var(--radius);
+    border: 2px solid rgba(201,168,76,0.3);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .avatar-placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+  }
+  .avatar-placeholder svg { opacity: 0.3; }
+  .avatar-placeholder span {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.6);
+  }
+  .avatar-wrap input[type="file"] { display: none; }
+
+  /* ── STATS BAR ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+  .stat {
+    background: var(--white);
+    padding: 1.5rem 1rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    line-height: 1.4;
+  }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 3.5rem; }
+  .section-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+  }
+  .section-rule { width: 40px; height: 1px; background: var(--gold); margin-bottom: 1.75rem; }
+
+  /* ── CAREER TIMELINE ── */
+  .timeline { display: flex; flex-direction: column; }
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 0.5px solid var(--border);
+    align-items: start;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-year { font-size: 12px; color: var(--text-light); padding-top: 2px; line-height: 1.5; }
+  .timeline-role { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .timeline-venue { font-size: 13px; color: var(--gold); margin-bottom: 5px; }
+  .timeline-note { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+  .award-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--gold);
+    border: 0.5px solid var(--gold-muted);
+    padding: 3px 9px;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+
+  /* ── PHOTO GALLERY ── */
+  .gallery-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    border-left: 2px solid var(--gold);
+    background: var(--white);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 1.5rem;
+    display: none;
+  }
+  body.edit-on .gallery-hint { display: block; }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .photo-slot {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--white);
+    transition: border-color 0.2s;
+  }
+  .photo-slot:hover { border-color: var(--gold-muted); }
+  .photo-area {
+    width: 100%;
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f0ede8;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  body.edit-on .photo-area { cursor: pointer; }
+  .photo-area img, .photo-area video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+  }
+  .photo-area video { object-fit: cover; }
+  .photo-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+    z-index: 1; pointer-events: none;
+  }
+  .photo-placeholder svg { opacity: 0.25; }
+  .photo-placeholder span {
+    font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text-light);
+  }
+  .photo-caption {
+    padding: 10px 14px;
+    background: var(--white);
+    border-top: 0.5px solid var(--border);
+  }
+  .caption-text {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    min-height: 20px;
+    display: block;
+  }
+  .caption-input {
+    width: 100%;
+    font-size: 12.5px;
+    font-family: 'Jost', sans-serif;
+    font-style: italic;
+    background: transparent;
+    border: none;
+    border-bottom: 0.5px solid var(--border);
+    padding: 3px 0;
+    color: var(--text);
+    outline: none;
+    display: none;
+  }
+  body.edit-on .caption-text { display: none; }
+  body.edit-on .caption-input { display: block; }
+  .caption-input:focus { border-bottom-color: var(--gold); }
+  .caption-input::placeholder { color: var(--text-light); }
+  .add-slot-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 11px;
+    border: 0.5px dashed var(--border);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--text-light);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    transition: all 0.2s;
+    display: none;
+  }
+  body.edit-on .add-slot-btn { display: block; }
+  .add-slot-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── VIDEO SECTION ── */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .video-slot {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--white);
+    transition: border-color 0.2s;
+  }
+  .video-slot:hover { border-color: var(--gold-muted); }
+  .video-area {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #111e35;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  body.edit-on .video-area { cursor: pointer; }
+  .video-area video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+  }
+  .video-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px; z-index: 1;
+  }
+  .video-placeholder svg { opacity: 0.3; }
+  .video-placeholder span {
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+  }
+  .video-num {
+    position: absolute; top: 12px; left: 12px;
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold);
+    opacity: 0.7; z-index: 2;
+  }
+
+  /* ── CUISINES ── */
+  .cuisine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .cuisine-card {
+    padding: 16px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    text-align: center;
+  }
+  .cuisine-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .cuisine-note { font-size: 11px; color: var(--text-light); }
+
+  /* ── CONTACT FOOTER ── */
+  .contact-footer {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .contact-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .contact-sub { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+  .contact-list { display: flex; flex-direction: column; gap: 10px; }
+  .contact-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: rgba(255,255,255,0.75);
+  }
+  .contact-icon { color: var(--gold); width: 16px; flex-shrink: 0; }
+
+  /* ── PRINT / SHARE NOTE ── */
+  .print-note {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  /* ── EDIT MODE OVERLAYS ── */
+  body.edit-on .avatar-wrap { border-color: rgba(201,168,76,0.6); }
+  body.edit-on .photo-area::after,
+  body.edit-on .video-area::after {
+    content: 'Click to upload';
+    position: absolute;
+    bottom: 8px; right: 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  @media print {
+    .edit-bar { display: none; }
+    .page { padding-top: 2rem; }
+    .add-slot-btn, .gallery-hint { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- EDIT BAR -->
+<div class="edit-bar">
+  <div class="edit-bar-left">
+    <div class="edit-dot"></div>
+    <span>Leonardo Garcia · Culinary Portfolio</span>
+  </div>
+  <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">Edit mode: OFF</button>
+</div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <p class="hero-eyebrow">Culinary Portfolio</p>
+      <h1 class="hero-name">Leonardo<br>Garcia</h1>
+      <div class="hero-rule"></div>
+      <p class="hero-bio">Executive Chef with over 20 years of Michelin-level culinary experience across Greece, Bahrain, and the UAE. Rooted in fine dining, with deep expertise in Mediterranean, Asian, and Latin cuisines. Known for building brigades that hold standards over time, designing menus with genuine personality, and delivering exceptional experiences whether in a restaurant kitchen or a private estate.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">Mediterranean</span>
+        <span class="hero-tag">Asian</span>
+        <span class="hero-tag">Latin · Mexican</span>
+        <span class="hero-tag">Fine Dining</span>
+        <span class="hero-tag">Private Chef</span>
+        <span class="hero-tag">UAE-Based</span>
+      </div>
+    </div>
+    <div class="avatar-wrap" id="avatarWrap" title="Click to upload photo">
+      <div class="avatar-placeholder" id="avatarPlaceholder">
+        <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="rgba(201,168,76,0.6)" stroke-width="1">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        <span>Add photo</span>
+      </div>
+      <img id="avatarImg" src="" alt="Leonardo Garcia" style="display:none;">
+      <input type="file" id="avatarFile" accept="image/*" onchange="loadAvatar(this)">
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">20+</div><div class="stat-label">Years<br>experience</div></div>
+    <div class="stat"><div class="stat-num">4×</div><div class="stat-label">Best Mediterranean<br>FACT Awards</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Countries<br>worked</div></div>
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Cuisines<br>mastered</div></div>
+  </div>
+
+  <!-- CAREER -->
+  <div class="section">
+    <p class="section-eyebrow">Career highlights</p>
+    <h2 class="section-title">Selected experience</h2>
+    <div class="section-rule"></div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-year">2025 · Dubai, UAE</span>
+        <div>
+          <p class="timeline-role">Executive Sous Chef</p>
+          <p class="timeline-venue">Avli by Tasha's — Michelin-Listed, DIFC</p>
+          <p class="timeline-note">Contemporary Greek fine dining at Gate Village. Led kitchen operations and brigade to consistent five-star standards across à la carte service and private events.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2025 · Bahrain</span>
+        <div>
+          <p class="timeline-role">Project Opening Chef</p>
+          <p class="timeline-venue">The Pelican Club Miami Brasserie</p>
+          <p class="timeline-note">Full culinary launch of an Art Deco Miami brasserie — menu engineering, supplier selection, brigade recruitment from zero to opening service.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2024 · Bahrain</span>
+        <div>
+          <p class="timeline-role">Head Chef</p>
+          <p class="timeline-venue">Nomad Urban Eatery — Seef</p>
+          <p class="timeline-note">Award-winning all-day dining concept. Directed full programme from breakfast through à la carte dinner, implementing quality systems and tightening sourcing discipline.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2019–2024 · Bahrain</span>
+        <div>
+          <p class="timeline-role">Head Chef</p>
+          <p class="timeline-venue">Attic Restaurant — Adliya</p>
+          <p class="timeline-note">Five consecutive years leading one of the Gulf's most awarded Mediterranean restaurants. Brigade of up to 22 across all service levels.</p>
+          <div class="award-badge">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+            FACT Magazine Awards 2020 · 2021 · 2022 · 2023
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2013–2019 · Crete, Greece</span>
+        <div>
+          <p class="timeline-role">Head Chef</p>
+          <p class="timeline-venue">Palmera Beach Hotel & Spa — Hersonissos</p>
+          <p class="timeline-note">Full culinary management for two restaurant operations and seasonal banquet service. Premium local Cretan produce for a high-end European leisure clientele.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2009–2012 · Thessaloniki, Greece</span>
+        <div>
+          <p class="timeline-role">Executive Chef (Dual Role)</p>
+          <p class="timeline-venue">Entryfish & Mayson Crystal</p>
+          <p class="timeline-note">Concurrent executive kitchen responsibility across a fine dining seafood concept and one of Thessaloniki's most prestigious waterfront restaurants.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2005–2009 · Greece</span>
+        <div>
+          <p class="timeline-role">Head Chef / Sous Chef</p>
+          <p class="timeline-venue">Interni Restaurant — Thessaloniki & Mykonos</p>
+          <p class="timeline-note">Progressive roles at a celebrated Mediterranean fine dining destination, including high-season service on Mykonos for an international clientele.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">1997–2005 · Venezuela</span>
+        <div>
+          <p class="timeline-role">Head Chef · Sous Chef · Chef de Partie</p>
+          <p class="timeline-venue">Limoncello · Mocambo · Citron Café · Hotel Belensate</p>
+          <p class="timeline-note">Foundational career across Italian fine dining, Latin American cuisine, and hotel restaurant management in Caracas and Mérida.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO GALLERY -->
+  <div class="section">
+    <p class="section-eyebrow">Work gallery</p>
+    <h2 class="section-title">The food</h2>
+    <div class="section-rule"></div>
+    <div class="gallery-hint">
+      Edit mode is ON — click any photo to upload an image. Add a description in the field below.
+    </div>
+    <div class="gallery-grid" id="photoGallery"></div>
+    <button class="add-slot-btn" onclick="addPhotoSlot()">+ Add photo</button>
+  </div>
+
+  <!-- VIDEO SECTION -->
+  <div class="section">
+    <p class="section-eyebrow">In the kitchen</p>
+    <h2 class="section-title">Videos</h2>
+    <div class="section-rule"></div>
+    <div class="gallery-hint">
+      Edit mode is ON — click any video slot to upload a MOV or MP4 file from your device.
+    </div>
+    <div class="video-grid" id="videoGrid"></div>
+  </div>
+
+  <!-- CUISINES -->
+  <div class="section">
+    <p class="section-eyebrow">Specialties</p>
+    <h2 class="section-title">Cuisine expertise</h2>
+    <div class="section-rule"></div>
+    <div class="cuisine-grid">
+      <div class="cuisine-card"><div class="cuisine-name">Mediterranean & Greek</div><div class="cuisine-note">16 years · core specialty</div></div>
+      <div class="cuisine-card"><div class="cuisine-name">Asian</div><div class="cuisine-note">Technique & product focus</div></div>
+      <div class="cuisine-card"><div class="cuisine-name">Latin & Mexican</div><div class="cuisine-note">Authentic regional roots</div></div>
+      <div class="cuisine-card"><div class="cuisine-name">Italian</div><div class="cuisine-note">Classic & contemporary</div></div>
+      <div class="cuisine-card"><div class="cuisine-name">Wellness & Nutritional</div><div class="cuisine-note">Dietary protocols</div></div>
+      <div class="cuisine-card"><div class="cuisine-name">Fine Pastry & BBQ</div><div class="cuisine-note">Charcoal grill · butchery</div></div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-footer">
+    <div>
+      <p class="contact-title">Available for new opportunities</p>
+      <p class="contact-sub">Dubai, UAE · Immediate availability</p>
+    </div>
+    <div class="contact-list">
+      <div class="contact-row">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        gleog75@gmail.com
+      </div>
+      <div class="contact-row">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        +971 58 809 2594
+      </div>
+      <div class="contact-row">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        Dubai, UAE · UAE Driving Licence
+      </div>
+      <div class="contact-row">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 8h-1a4 4 0 0 0-4 4v3h-2v-3H7v-3h2V9a5 5 0 0 1 5-5h2v3z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        linkedin.com/in/leonardogarciachef
+      </div>
+    </div>
+  </div>
+
+  <p class="print-note">Leonardo Garcia · Executive Chef · Dubai, UAE · gleog75@gmail.com</p>
+
+</div><!-- /page -->
+
+<script>
+  // ── EDIT MODE ──
+  let editOn = false;
+  function toggleEdit() {
+    editOn = !editOn;
+    document.body.classList.toggle('edit-on', editOn);
+    const btn = document.getElementById('editToggle');
+    btn.textContent = 'Edit mode: ' + (editOn ? 'ON' : 'OFF');
+    btn.classList.toggle('active', editOn);
+  }
+
+  // ── AVATAR ──
+  document.getElementById('avatarWrap').addEventListener('click', function() {
+    if (editOn) document.getElementById('avatarFile').click();
+  });
+  function loadAvatar(input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = document.getElementById('avatarImg');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('avatarPlaceholder').style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  // ── PHOTO GALLERY ──
+  let photoCount = 0;
+  function addPhotoSlot(captionValue) {
+    photoCount++;
+    const id = 'photo-' + photoCount;
+    const slot = document.createElement('div');
+    slot.className = 'photo-slot';
+    slot.innerHTML = `
+      <div class="photo-area" id="parea-${id}" onclick="triggerPhotoUpload('${id}')">
+        <div class="photo-placeholder">
+          <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/>
+            <path d="M8.5 5 10 3h4l1.5 2"/>
+          </svg>
+          <span>Upload photo</span>
+        </div>
+        <img id="pimg-${id}" src="" alt="" style="display:none;">
+        <input type="file" id="pfile-${id}" accept="image/*" style="display:none" onchange="loadPhoto(this,'${id}')">
+      </div>
+      <div class="photo-caption">
+        <span class="caption-text" id="ptext-${id}">${captionValue || 'Add a description...'}</span>
+        <input type="text" class="caption-input" id="pinput-${id}"
+          placeholder="Dish name, technique, event..."
+          value="${captionValue || ''}"
+          onchange="document.getElementById('ptext-${id}').textContent = this.value || 'Add a description...'">
+      </div>`;
+    document.getElementById('photoGallery').appendChild(slot);
+  }
+  function triggerPhotoUpload(id) {
+    if (editOn) document.getElementById('pfile-' + id).click();
+  }
+  function loadPhoto(input, id) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const area = document.getElementById('parea-' + id);
+      area.querySelector('.photo-placeholder').style.display = 'none';
+      const img = document.getElementById('pimg-' + id);
+      img.src = e.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  // ── VIDEO GRID ──
+  let videoCount = 0;
+  function addVideoSlot() {
+    videoCount++;
+    const id = 'video-' + videoCount;
+    const num = String(videoCount).padStart(2, '0');
+    const slot = document.createElement('div');
+    slot.className = 'video-slot';
+    slot.innerHTML = `
+      <div class="video-area" id="varea-${id}" onclick="triggerVideoUpload('${id}')">
+        <span class="video-num">${num}</span>
+        <div class="video-placeholder">
+          <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="rgba(201,168,76,0.5)" stroke-width="1">
+            <polygon points="5,3 19,12 5,21"/>
+          </svg>
+          <span>Upload video</span>
+        </div>
+        <video id="vid-${id}" style="display:none;" controls playsinline></video>
+        <input type="file" id="vfile-${id}" accept="video/mp4,video/quicktime,.mov,.mp4" style="display:none" onchange="loadVideo(this,'${id}')">
+      </div>
+      <div class="photo-caption">
+        <span class="caption-text" id="vctext-${id}">Add a description...</span>
+        <input type="text" class="caption-input" id="vcinput-${id}"
+          placeholder="What's happening in this video..."
+          onchange="document.getElementById('vctext-${id}').textContent = this.value || 'Add a description...'">
+      </div>`;
+    document.getElementById('videoGrid').appendChild(slot);
+  }
+  function triggerVideoUpload(id) {
+    if (editOn) document.getElementById('vfile-' + id).click();
+  }
+  function loadVideo(input, id) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const url = URL.createObjectURL(file);
+    const area = document.getElementById('varea-' + id);
+    area.querySelector('.video-placeholder').style.display = 'none';
+    const vid = document.getElementById('vid-' + id);
+    vid.src = url;
+    vid.style.display = 'block';
+    vid.style.position = 'absolute';
+    vid.style.top = '0'; vid.style.left = '0';
+    vid.style.width = '100%'; vid.style.height = '100%';
+  }
+
+  // ── INIT ──
+  for (let i = 0; i < 4; i++) addPhotoSlot();
+  for (let i = 0; i < 4; i++) addVideoSlot();
+</script>
+</body>
+</html>
